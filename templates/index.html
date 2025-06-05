@@ -2,11 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hello Flask</title>
+    <title>Translator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>Welcome to the simple Flask app.</p>
+    <h1>Kazakh-Russian Translator</h1>
+    <div id="translator">
+        <textarea id="input" placeholder="Enter text..."></textarea>
+        <select id="direction">
+            <option value="kk-ru">Kazakh → Russian</option>
+            <option value="ru-kk">Russian → Kazakh</option>
+        </select>
+        <button id="translate">Translate</button>
+        <p id="loading" style="display:none;">Translating...</p>
+        <textarea id="output" readonly></textarea>
+    </div>
+    <script>
+    document.getElementById('translate').onclick = async function() {
+        const text = document.getElementById('input').value;
+        const direction = document.getElementById('direction').value;
+        const loading = document.getElementById('loading');
+        loading.style.display = 'block';
+        const resp = await fetch('/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, direction })
+        });
+        const data = await resp.json();
+        document.getElementById('output').value = data.translated;
+        loading.style.display = 'none';
+    };
+    </script>
 </body>
 </html>
